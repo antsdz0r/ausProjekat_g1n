@@ -26,6 +26,7 @@ namespace Modbus.ModbusFunctions
         {
             //TO DO: IMPLEMENT
             throw new NotImplementedException();
+
         }
 
         /// <inheritdoc />

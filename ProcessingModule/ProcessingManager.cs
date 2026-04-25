@@ -38,7 +38,7 @@ namespace ProcessingModule
             IModbusFunction fn = FunctionFactory.CreateModbusFunction(p);
             this.functionExecutor.EnqueueCommand(fn);
         }
-        
+
         /// <inheritdoc />
         public void ExecuteWriteCommand(IConfigItem configItem, ushort transactionId, byte remoteUnitAddress, ushort pointAddress, int value)
         {
@@ -62,7 +62,8 @@ namespace ProcessingModule
         /// <param name="value">The value.</param>
         private void ExecuteDigitalCommand(IConfigItem configItem, ushort transactionId, byte remoteUnitAddress, ushort pointAddress, int value)
         {
-            ModbusWriteCommandParameters p = new ModbusWriteCommandParameters(6, (byte)ModbusFunctionCode.WRITE_SINGLE_COIL, pointAddress, (ushort)value, transactionId, remoteUnitAddress);
+            ushort coilValue = value == 0 ? (ushort)0x0000 : (ushort)0xFF00;
+            ModbusWriteCommandParameters p = new ModbusWriteCommandParameters(6, (byte)ModbusFunctionCode.WRITE_SINGLE_COIL, pointAddress, coilValue, transactionId, remoteUnitAddress);
             IModbusFunction fn = FunctionFactory.CreateModbusFunction(p);
             this.functionExecutor.EnqueueCommand(fn);
         }
@@ -109,7 +110,7 @@ namespace ProcessingModule
         private void CommandExecutor_UpdatePointEvent(PointType type, ushort pointAddress, ushort newValue)
         {
             List<IPoint> points = storage.GetPoints(new List<PointIdentifier>(1) { new PointIdentifier(type, pointAddress) });
-            
+
             if (type == PointType.ANALOG_INPUT || type == PointType.ANALOG_OUTPUT)
             {
                 ProcessAnalogPoint(points.First() as IAnalogPoint, newValue);
